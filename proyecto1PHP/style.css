@@ -1,0 +1,49 @@
+/* Estilo personalizado para el input */
+.form-control-lg:focus {
+  background-color: white !important;
+  /* Fondo blanco */
+  box-shadow: none !important;
+  /* Elimina la sombra por defecto */
+  border-color: #ced4da !important;
+  /* Establece el borde por defecto de Bootstrap */
+}
+
+
+body {
+
+  margin-bottom: 10em;
+  /* Si quieres eliminar otros estilos como el foco con borde azulado, puedes hacerlo así */
+  .form-control-lg:focus {
+    outline: none;
+    /* Elimina el contorno del input al hacer foco */
+  }
+
+  /*estilos para los links:*/
+  li {
+    #active {
+      color: #007bff;
+    }
+
+    .nav-link {
+      color: black;
+      font-size: 13px;
+    }
+  }
+
+  .form-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+  }
+
+  #exampleInput {
+    background-color: #495057;
+  }
+
+  #contenedor {
+    img{
+      max-width: 100px;
+    }
+  }
+}
