@@ -12,6 +12,7 @@
 body {
 
   margin-bottom: 10em;
+
   /* Si quieres eliminar otros estilos como el foco con borde azulado, puedes hacerlo así */
   .form-control-lg:focus {
     outline: none;
@@ -42,8 +43,21 @@ body {
   }
 
   #contenedor {
-    img{
+    img {
       max-width: 100px;
     }
   }
+
+  /* Estilo predeterminado para el buscador de archivos */
+  .custom-file-label {
+    background-color: white;
+    color: #333;
+  }
+
+  /* Estilo cuando se selecciona una imagen */
+  .custom-file-label.selected {
+    background-color: #28a745;
+    color: white;
+  }
+
 }

@@ -1,6 +1,7 @@
 
-<?php include('/proyecto1PHP/script.php'); ?>
-<?php include('/proyecto1PHP/web.php'); 
+<?php 
+include('proyecto1PHP/php/script.php');
+include('proyecto1PHP/php/web.php'); 
 
 ?>
 

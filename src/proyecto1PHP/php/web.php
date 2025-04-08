@@ -9,7 +9,7 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
     integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="proyecto1PHP/css/style.css">
   <title>Formulario Boostrap</title>
 
 </head>
@@ -189,7 +189,7 @@
       </div>
 
       <div class="form-container p-4">
-        <form action="" method="POST" class="" id="form">
+        <form action="proyecto1PHP/php/script.php" method="post" class="" id="form" enctype="multipart/form-data">
           <div class="form-row">
 
             <!-- Campo de Nombre -->
@@ -233,9 +233,9 @@
               <div class="border my-4 px-3 py-2">
                 <p><strong>Datos adicionales</strong></p>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="casado" name="addicional" value="Casado">
+                  <input class="form-check-input" type="checkbox" id="casado" name="casado" value="Casado">
                   <label class="form-check-label pr-3" for="casado">Esta casad@</label>
-                  <input class="form-check-input" type="checkbox" id="equipo" name="addicional" value="equipo">
+                  <input class="form-check-input" type="checkbox" id="equipo" name="en_equipo" value="equipo">
                   <label class="form-check-label" for="equipo">En el equipo actual</label>
                 </div>
               </div>
@@ -253,14 +253,14 @@
             <!-- Seleccionar Imagen -->
             <div class="col">
               <div class="custom-file">
-                <input type="file" accept=".jpg, .jpeg, .png, .gif" class="custom-file-input" id="customFile">
+                <input type="file" accept=".jpg, .jpeg, .png, .gif" class="custom-file-input" name="imagen" id="customFile">
                 <label class="custom-file-label   " for="customFile">Elige una imagen</label>
               </div>
             </div>
             <!-- Botón de añadir -->
             <div class="col">
               <div class="form-group">
-                <button class="btn btn-secondary"onclick="add_to_list()" type="reset">Añadir</button>
+                <input value="Añadir" class="btn btn-secondary"onclick="add_to_list()" type="submit"/>
               </div>
             </div>
           </div>
@@ -268,6 +268,8 @@
       </div>
 
       <button class="btn btn-primary mt-2"  type="submit">Guardar</button>
+
+
       <div class="table-responsive">
         <table class="table table-hover table-striped mt-5 table-sm">
           <thead>
@@ -293,7 +295,7 @@
   </div>
 
 
-  <script src="script.js"></script>
+  <script src="proyecto1PHP/js/script.js"></script>
   <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
