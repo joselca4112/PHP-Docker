@@ -19,7 +19,6 @@ document.getElementById("form").addEventListener('submit', (event) => {
 class Personaje {
 
   constructor(nombre, apodo, tipo_danio, casado, en_equipo, clase, descripcion, img) {
-    this.id = this.generarUUID();           // id autogenerado
     this.nombre = nombre;        // nombre 
     this.apodo = apodo;            // apodo
     this.tipo_danio = tipo_danio;      // daño melee o a distancia
@@ -45,7 +44,7 @@ function add_to_list() {
 
   //Lanzamos el action del form para agregar un nuevo dato, gestionar la creacion de db, tablas, etc
   //submitForm();
-  document.getElementById('form').submit();
+  document.getElementById('form').submit(); // para abrir una nueva ventana
 
   // Obtener los valores de los campos del formulario
   let nombre = document.getElementById("name").value;
