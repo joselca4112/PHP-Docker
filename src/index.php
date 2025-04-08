@@ -1,7 +1,6 @@
-posix_getcwd<html>
-    <body>
-        <h1>Bienvenido</h1>
-        <?php echo "<p>¡Texto generado dinámicamente con PHP!</p>"; ?>
-        2
-    </body>
-</html>
+
+<?php include('/proyecto1PHP/script.php'); ?>
+<?php include('/proyecto1PHP/web.php'); 
+
+?>
+
