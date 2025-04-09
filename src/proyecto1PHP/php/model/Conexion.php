@@ -1,6 +1,4 @@
-
-<?
-class Conexion
+<?class Conexion
 {
     private $host = "db"; //host, en este caso el del docker
     private $dbname = "mydb";  //bbdd
@@ -131,7 +129,7 @@ class Conexion
     }
 
     // Obtener un personaje por su id
-    public static function cargar_por_id($conn, $id)
+    public static function cargar_por_id($conn, $id):array
     {
         $query = "SELECT * FROM personajes WHERE id = :id";
         $stmt = $conn->prepare($query);

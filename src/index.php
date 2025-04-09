@@ -1,12 +1,12 @@
+<?php session_start();  // Inicia la sesión
 
-<?php 
 //Habilitar errores
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
 
 //Ficheros que uso en el proyecto 1
-include('proyecto1PHP/php/script.php');
-include('proyecto1PHP/php/web.php'); 
+include('proyecto1PHP/php/script.php');//Primero cargo el script
+include('proyecto1PHP/php/web.php'); //Despues la web html
 
 ?>
 

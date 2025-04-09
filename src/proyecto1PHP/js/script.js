@@ -17,26 +17,27 @@ document.getElementById("form").addEventListener('submit', (event) => {
 //Prototipo de clase personaje, en js lo trataremos como un archivo temporal, lo importante es como se guarda
 //como se mostrara la prox vez que cargue la pagina
 class Personaje {
-
-  constructor(nombre, apodo, tipo_danio, casado, en_equipo, clase, descripcion, img) {
-    this.nombre = nombre;        // nombre 
-    this.apodo = apodo;            // apodo
-    this.tipo_danio = tipo_danio;      // daño melee o a distancia
-    this.casado = casado;      // booleano casado
-    this.en_equipo = en_equipo;              // boleano sobre si esta en el equipo
-    this.clase = clase;        // clase del personaje
-    this.descripcion = descripcion; //descripcion del personaje
-    this.img = img; //ruta local de la imagen del personaje
-
+  constructor(
+    id = null,              // ID opcional
+    nombre = null,          // nombre 
+    apodo = null,           // apodo
+    tipo_danio = null,      // daño melee o a distancia
+    casado = null,          // booleano casado
+    en_equipo = null,       // booleano sobre si está en el equipo
+    clase = null,           // clase del personaje
+    descripcion = null,     // descripcion del personaje
+    img = null              // ruta local de la imagen del personaje
+  ) {
+    this.id = id;
+    this.nombre = nombre;
+    this.apodo = apodo;
+    this.tipo_danio = tipo_danio;
+    this.casado = casado;
+    this.en_equipo = en_equipo;
+    this.clase = clase;
+    this.descripcion = descripcion;
+    this.img = img;
   }
-
-  // Método mejorado para generar un UUID (combinando el tiempo con aleatorios)
-  generarUUID() {
-    const timestamp = Date.now().toString(16);  // Obtenemos el timestamp actual en hexadecimal
-    const randomValue = Math.floor(Math.random() * 0xFFFFF).toString(16);  // Generamos un valor aleatorio
-    return `${timestamp}-${randomValue}`;
-  }
-
 }
 
 //funcion que envie los datos del formulario a la lista al pulsar el boton
@@ -76,6 +77,7 @@ function add_to_list() {
 
     // Crear una instancia del personaje con los datos del formulario
     let personaje = new Personaje(
+      null,
       nombre,
       apodo,
       tipo_danio,
@@ -111,7 +113,7 @@ function anadir_dato_html(personaje) {
 
   // imagen para añadir al th
   const imagen = document.createElement('img');
-  
+
   if (!personaje.img) {
     imagen.src = img_default; // Use default image
     imagen.alt = personaje.nombre; // Use the title as alt text
@@ -195,22 +197,29 @@ function limpiar_formulario() {
 
 }
 
-function submitForm() {
-  // Crear un objeto FormData con los datos del formulario
+function submitForm(event) {
+  event.preventDefault();  // Previene el comportamiento por defecto del formulario (recargar la página)
+
+  // Crea un objeto FormData con los datos del formulario
   var formData = new FormData(document.getElementById('form'));
 
   // Crear un objeto XMLHttpRequest para enviar los datos
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'proyecto1PHP/php/script.php', true);
+  xhr.open('POST', 'proyecto1PHP/php/script.php', true);  // Ruta al script PHP que procesará los datos
 
   // Manejar la respuesta del servidor
   xhr.onload = function () {
     if (xhr.status >= 200 && xhr.status < 300) {
-      // Si la respuesta es exitosa, puedes procesar la respuesta aquí
       console.log('Formulario enviado correctamente');
-      console.log(xhr.responseText);  // Puedes ver lo que el PHP devuelve
+      console.log(xhr.responseText);  // Puedes ver lo que el PHP devuelve, puedes mostrarlo en la UI
     } else {
       console.error('Error en la solicitud: ' + xhr.status);
     }
-  }
+  };
+
+  // Enviar la solicitud con los datos del formulario
+  xhr.send(formData);
 }
+
+
+

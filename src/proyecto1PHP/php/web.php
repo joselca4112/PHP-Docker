@@ -16,6 +16,10 @@
 
 <body>
 
+  <? //Para obtener la lista de personajes cargados desde script.php:
+  $personajes_cargados = isset($_SESSION['list_personajes']) ? $_SESSION['list_personajes'] : [];
+  ?>
+
   <div class="container-flex text-center h5 sticky-top mb-0 ">
     <div class="row row cols-md-2">
       <a class="nav-link text-white bg-dark col-md-2 text-wrap text-center pt-2 pb-2 pl-3" href="">This Page</a>
@@ -168,7 +172,7 @@
 
     <main role="main" class="col-md-10 ml-sm-auto pt-3 px-4">
 
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap"> 
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap">
         <h1>Formulario de personajes DND </h1>
         <div class="p-3 d-inline-flex">
           <div class="btn-group" role="group">
@@ -189,7 +193,7 @@
       </div>
 
       <div class="form-container p-4">
-        <form action="proyecto1PHP/php/script.php" method="post" class="" id="form" enctype="multipart/form-data">
+        <form onsubmit="submitForm(event)" method="post" class="" id="form" enctype="multipart/form-data">
           <div class="form-row">
 
             <!-- Campo de Nombre -->
@@ -200,8 +204,7 @@
             <!-- Campo de Apodo -->
             <div class="form-group col-md-6">
               <label for="apodo">Apodo</label>
-              <input class="form-control" type="text" id="apodo" name="apodo" placeholder="Introduce el apodo del personaje"
-                >
+              <input class="form-control" type="text" id="apodo" name="apodo" placeholder="Introduce el apodo del personaje">
             </div>
           </div>
 
@@ -245,8 +248,7 @@
           <!-- Campo textarea para la descripcion del personaje -->
           <div class="form-group">
             <label for="descripcion">Descripcion:</label>
-            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Escribe la descripcion del personaje..."
-              ></textarea>
+            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Escribe la descripcion del personaje..."></textarea>
           </div>
 
           <div class="form-row">
@@ -260,14 +262,14 @@
             <!-- Botón de añadir -->
             <div class="col">
               <div class="form-group">
-                <input value="Añadir" class="btn btn-secondary"onclick="add_to_list()" type="submit"/>
+                <input value="Añadir" class="btn btn-secondary" onclick="add_to_list()" type="submit" />
               </div>
             </div>
           </div>
         </form>
       </div>
 
-      <button class="btn btn-primary mt-2"  type="submit">Guardar</button>
+      <button class="btn btn-primary mt-2" type="submit">Guardar</button>
 
 
       <div class="table-responsive">
@@ -284,7 +286,7 @@
             </tr>
           </thead>
           <tbody id="contenedor">
-               <!--añadir datos de personajes creados aqui-->
+            <!--añadir datos de personajes creados aqui-->
           </tbody>
         </table>
       </div>
@@ -296,6 +298,35 @@
 
 
   <script src="proyecto1PHP/js/script.js"></script>
+
+  <script>
+    // funcion para cargar los datos guardados en la bbdd
+    document.addEventListener('DOMContentLoaded', function() {
+
+      // los transformamos a una variable de js
+      const personajesjson = <?php echo json_encode($personajes_cargados); ?>;
+
+      //Los 'casteamos' a un objeto de la clase Personaje
+      const personajesObj = personajesjson.map(data => new Personaje(
+        data.id,
+        data.nombre,
+        data.apodo,
+        data.tipo_danio,
+        data.casado,
+        data.en_equipo,
+        data.clase,
+        data.descripcion,
+        data.img
+      ));
+     
+      // iteramos la lista y vamos añadiendolos
+      personajesObj.forEach(personaje => {
+        anadir_dato_html(personaje);
+      });
+    });
+
+  </script>
+
   <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"

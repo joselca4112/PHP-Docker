@@ -1,7 +1,7 @@
-
 <?
-class Personaje
+class Personaje implements JsonSerializable
 {
+    private ?int $id;
     private ?string $nombre;
     private ?string $apodo;
     private ?string $tipo_danio;
@@ -10,6 +10,16 @@ class Personaje
     private ?string $clase;
     private ?string $descripcion;
     private ?string $img;
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     public function getNombre()
     {
@@ -91,6 +101,7 @@ class Personaje
 
     // Constructor
     public function __construct(
+        $id=null,
         $nombre = null,
         $apodo = null,
         $tipo_danio = null,
@@ -100,7 +111,7 @@ class Personaje
         $descripcion = null,
         $img = null
     ) {
-
+        $this->id = $id;
         $this->nombre = $nombre;
         $this->apodo = $apodo;
         $this->tipo_danio = $tipo_danio;
@@ -119,5 +130,19 @@ class Personaje
             return substr($string, 0, $longitudMaxima);
         }
         return $string;
+    }
+
+    public function jsonSerialize() : array{
+        return [
+            'id' => $this->id,
+            'nombre' => $this->nombre,
+            'apodo' => $this->apodo,
+            'tipo_danio' => $this->tipo_danio,
+            'casado' => $this->casado,
+            'en_equipo' => $this->en_equipo,
+            'clase' => $this->clase,
+            'descripcion' => $this->descripcion,
+            'img' => $this->img
+        ];
     }
 };
