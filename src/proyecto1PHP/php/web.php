@@ -16,10 +16,6 @@
 
 <body>
 
-  <? //Para obtener la lista de personajes cargados desde script.php:
-  $personajes_cargados = isset($_SESSION['list_personajes']) ? $_SESSION['list_personajes'] : [];
-  ?>
-
   <div class="container-flex text-center h5 sticky-top mb-0 ">
     <div class="row row cols-md-2">
       <a class="nav-link text-white bg-dark col-md-2 text-wrap text-center pt-2 pb-2 pl-3" href="">This Page</a>
@@ -269,13 +265,16 @@
         </form>
       </div>
 
-      <button class="btn btn-primary mt-2" type="submit">Guardar</button>
+      <button class="btn btn-primary mt-2" id="delete-selected">Eliminar selección</button>
 
 
       <div class="table-responsive">
-        <table class="table table-hover table-striped mt-5 table-sm">
+        <table class="table table-hover mt-5 text-center">
           <thead>
             <tr>
+              <th scope="col">
+                <input type="checkbox" id="select-all">
+              </th>
               <th scope="col">Icono</th>
               <th scope="col">Nombre</th>
               <th scope="col">Apodo</th>
@@ -296,35 +295,87 @@
 
   </div>
 
-
+  <!-- lick a JS -->
   <script src="proyecto1PHP/js/script.js"></script>
 
+  <!-- Script con funciones del arbol dom que deben conectar con PHP -->
   <script>
+    <? //Para obtener la lista de personajes cargados desde script.php:
+    $personajes_cargados = isset($_SESSION['list_personajes']) ? $_SESSION['list_personajes'] : [];
+    ?>
+    // los transformamos a una variable de js
+    const personajesjson = <?php echo json_encode($personajes_cargados); ?>;
+
+    //Los 'casteamos' a un objeto de la clase Personaje
+    const personajesObj = personajesjson.map(data => new Personaje(
+      data.id,
+      data.nombre,
+      data.apodo,
+      data.tipo_danio,
+      data.casado,
+      data.en_equipo,
+      data.clase,
+      data.descripcion,
+      data.img
+    ));
+    
     // funcion para cargar los datos guardados en la bbdd
     document.addEventListener('DOMContentLoaded', function() {
 
-      // los transformamos a una variable de js
-      const personajesjson = <?php echo json_encode($personajes_cargados); ?>;
-
-      //Los 'casteamos' a un objeto de la clase Personaje
-      const personajesObj = personajesjson.map(data => new Personaje(
-        data.id,
-        data.nombre,
-        data.apodo,
-        data.tipo_danio,
-        data.casado,
-        data.en_equipo,
-        data.clase,
-        data.descripcion,
-        data.img
-      ));
-     
       // iteramos la lista y vamos añadiendolos
       personajesObj.forEach(personaje => {
         anadir_dato_html(personaje);
       });
     });
 
+    //Añadir eventos para manejar la eliminacion por selección
+    document.addEventListener('DOMContentLoaded', () => {
+      const selectAll = document.getElementById('select-all');
+      const deleteBtn = document.getElementById('delete-selected');
+      const tableBody = document.querySelector('tbody'); // Suponiendo que las filas están dentro de tbody
+
+      // Verificación de que los elementos existen
+      if (!selectAll || !deleteBtn || !tableBody) {
+        console.error('No se encontraron los elementos necesarios en el DOM');
+        return;
+      }
+
+      // Delegación de eventos para los checkboxes
+      tableBody.addEventListener('change', (e) => {
+        if (e.target.classList.contains('select-row')) {
+          // Cambiar el estilo de la fila según el estado del checkbox
+          e.target.closest('tr').classList.toggle('fila_seleccionada', e.target.checked);
+        }
+      });
+
+      // Seleccionar/deseleccionar todos
+      selectAll.addEventListener('change', () => {
+        const checkboxes = tableBody.querySelectorAll('.select-row');
+        checkboxes.forEach(cb => {
+          cb.checked = selectAll.checked;
+          cb.closest('tr').classList.toggle('fila_seleccionada', cb.checked);
+        });
+      });
+
+      // Acción al hacer clic en el botón "Eliminar"
+      deleteBtn.addEventListener('click', () => {
+
+        const checkboxes = tableBody.querySelectorAll('.select-row');
+
+        checkboxes.forEach((cb, index) => { // Corregimos la sintaxis de forEach
+          if (cb.checked) {
+            cb.closest('tr').remove(); // Borra la fila completa
+
+            // Obtenemos el id del personaje usando el índice de la fila
+            //Ya que los elementos se añaden desde personajesObj la posicion dentro de esta lista es la misma que en la tabla.
+            const id = personajesObj[index].id;
+
+            // Conectar con PHP para eliminar el registro
+            eliminarDeBaseDeDatos(id); // Esto debe ser la función que conecta con PHP
+          }
+        });
+      });
+    });
   </script>
 
   <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->

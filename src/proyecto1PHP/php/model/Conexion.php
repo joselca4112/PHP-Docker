@@ -1,4 +1,4 @@
-<?class Conexion
+<? class Conexion
 {
     private $host = "db"; //host, en este caso el del docker
     private $dbname = "mydb";  //bbdd
@@ -50,7 +50,7 @@
     //Method to disconect
     public static function desconectar($conn)
     {
-        $conn=null;
+        $conn = null;
     }
 
     //Crear la tabla en la bbdd
@@ -129,12 +129,31 @@
     }
 
     // Obtener un personaje por su id
-    public static function cargar_por_id($conn, $id):array
+    public static function cargar_por_id($conn, $id): array
     {
         $query = "SELECT * FROM personajes WHERE id = :id";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Eliminar un personaje por su id
+    public static function eliminar_por_id($conn, $id): bool
+    {
+        // Consulta SQL para eliminar el personaje con el id proporcionado
+        $query = "DELETE FROM personajes WHERE id = :id";
+
+        // Preparar la consulta
+        $stmt = $conn->prepare($query);
+
+        // Vincular el parámetro :id con el valor recibido
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Retornar true si se eliminó el registro, false en caso contrario
+        return $stmt->rowCount() > 0;  // Si rowCount() > 0, se eliminó al menos una fila
     }
 }

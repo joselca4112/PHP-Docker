@@ -77,9 +77,10 @@ function add_to_list() {
 
     // Crear una instancia del personaje con los datos del formulario
     let personaje = new Personaje(
-      null,
-      nombre,
-      apodo,
+      Math.max(...lista_personajes.map(personaje => personaje.id))+1,       
+                    //En cuanto al id, lo asigna el autoincrement en la bbdd pero podemos predecirlo:
+      nombre,       //Los datos de mi lista_personajes tienen id cargado de la bbdd, id del nuevo personaje sera
+      apodo,        //el maximo de estos id + 1, por lo que buscamos el id maximo
       tipo_danio,
       casado,
       en_equipo,
@@ -106,9 +107,16 @@ function anadir_dato_html(personaje) {
 
   // tr dentro del contenedor
   const tr = document.createElement("tr");
+  tr.classList.add('my-3');
+
+  //crear campo para el chexkbox de eliminar:
+  const cb_container = document.createElement("th");
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.classList.add('select-row');
 
   // Crear un elemento <th> para la imagen
-  const th_img = document.createElement('th');
+  const th_img = document.createElement('td');
   th_img.setAttribute('scope', 'row');// Establecer el atributo 'scope' en el elemento <th>
 
   // imagen para añadir al th
@@ -137,11 +145,11 @@ function anadir_dato_html(personaje) {
 
   // td para el boleano casado
   const casado = document.createElement('td');
-  casado.textContent = personaje.casado;
+  casado.textContent = personaje.casado? 'Si':'No'   ;
 
   // td para el boleano en_equipo
   const en_equipo = document.createElement('td');
-  en_equipo.textContent = personaje.en_equipo;
+  en_equipo.textContent = personaje.en_equipo? 'Si':'No'   ;
 
   // td para la clase
   const clase = document.createElement('td');
@@ -150,7 +158,11 @@ function anadir_dato_html(personaje) {
   //añadir imagen al th
   th_img.appendChild(imagen);
 
+  //Añadir checkbox a su contenedor:
+  cb_container.appendChild(checkbox);
+
   // añadir lo td
+  tr.appendChild(cb_container);
   tr.appendChild(th_img);
   tr.appendChild(nombre);
   tr.appendChild(apodo);
@@ -220,6 +232,26 @@ function submitForm(event) {
   // Enviar la solicitud con los datos del formulario
   xhr.send(formData);
 }
+//Función para enviar el ID al servidor usando fetch
+function eliminarDeBaseDeDatos(id) {
+  
+  fetch('proyecto1PHP/php/eliminar.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id: id })
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Error en la solicitud');
+    console.log('Registro eliminado correctamente');
+  })
+  .catch(error => {
+    console.error('Error al eliminar:', error);
+  });
+  
+}
+
 
 
 

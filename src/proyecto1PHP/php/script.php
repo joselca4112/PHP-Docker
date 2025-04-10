@@ -6,9 +6,9 @@ apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev
 docker-php-ext-configure gd --with-freetype --with-jpeg
 docker-php-ext-install gd mysqli
 */
-
-include("model/Conexion.php");
-include("model/Personaje.php");
+//Ficheros de clase
+include_once("model/Conexion.php");
+include_once("model/Personaje.php");
 
 //ruta de la img por defecto y la ruta con la que guardar en la bbdd
 $img_default = "proyecto1PHP/imagenes/userimg.jpg";
@@ -37,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $descripcion = isset($_POST['descripcion']) ? $_POST['descripcion'] : '';
     $casado = isset($_POST['casado']) && $_POST['casado'] === 'on' ? 1 : 0;
     $en_equipo = isset($_POST['en_equipo']) && $_POST['en_equipo'] === 'on' ? 1 : 0;
+
 
     // Añadir los datos a un objeto personaje
     $personaje = new Personaje();
@@ -90,16 +91,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: ".$_SERVER['PHP_SELF']);
     exit();
 };
-Conexion::desconectar($conexion); //Asegurarnos de cerrar la conexion al final del fichero
 
+Conexion::desconectar($conexion); //Asegurarnos de cerrar la conexion al final del fichero
 
 //Funcion para añadir un nuevo elemento a la tabla
 function add_personaje($conexion, $personaje)
 {
     Conexion::insertar($conexion, $personaje);
 }
-
-
 
 //Funcion para cargar datos y añadirlos dinamicamente
 function cargar_datos($conexion): array
@@ -117,9 +116,9 @@ function cargar_datos($conexion): array
             $registro['nombre'],    
             $registro['apodo'],    
             $registro['tipo_danio'], 
-            (int) $registro['casado']  ,
-            (int) $registro['en_equipo']  ,
-            $registro['en_equipo']  ,
+            $registro['casado'],
+            $registro['en_equipo'],
+            $registro['clase']  ,
             $registro['descripcion']  ,
             $registro['img']  ,
 

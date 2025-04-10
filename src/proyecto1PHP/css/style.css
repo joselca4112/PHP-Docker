@@ -60,4 +60,8 @@ body {
     color: white;
   }
 
+  .fila_seleccionada {
+    background-color: #e8f0fe; /* azul clarito */
+  }
+
 }
