@@ -131,7 +131,7 @@ class Personaje implements JsonSerializable
         }
         return $string;
     }
-
+    
     public function jsonSerialize() : array{
         return [
             'id' => $this->id,

@@ -15,7 +15,7 @@ if (isset($data['id'])) {
     eliminar_personaje($conexion,$id);
 };
 
-function eliminar_personaje($conn, $id){
+function eliminar_personaje(PDO $conn, $id){
     // Llamamos a la función que elimina el personaje de la base de datos
   $resultado = Conexion::eliminar_por_id($conn, $id);
 
@@ -26,3 +26,5 @@ function eliminar_personaje($conn, $id){
     echo json_encode(['success' => false, 'message' => 'Error al eliminar el personaje']);
   }
 }
+
+Conexion::desconectar($conexion); //Asegurarnos de cerrar la conexion al final del fichero

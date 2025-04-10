@@ -14,21 +14,21 @@
     docker-php-ext-install pdo pdo_mysql mysqli
     exit
     docker restart php_container
-
     */
+    
     // Método para conectarse a la base de datos
     private function __construct()
     {
         try {
             // Usamos PDO para la conexión
             self::$conn = new PDO("mysql:host=$this->host;dbname=$this->dbname", $this->username, $this->password);
-            self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             // $dsn = "mysql:host=$this->host;dbname=$this->dbname;charset=utf8";
             // self::$conn = new PDO($dsn, $this->username, $this->password);
 
             // Configuramos el modo de error de PDO para lanzar excepciones
             self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
         } catch (PDOException $e) {
             echo ("Error de conexión con la base de datos: " . $e->getMessage());
         }
@@ -115,7 +115,7 @@
             // Ejecutar la consulta
             $stmt->execute();
         } catch (Exception $e) {
-            print_r("Error al ejecutar la insercion de datos: " . $e->getMessage());
+            error_log("Error al ejecutar la insercion de datos: " . $e->getMessage());
         }
     }
 

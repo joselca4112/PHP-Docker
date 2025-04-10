@@ -1,4 +1,5 @@
 <?php
+//declare(strict_types=1); Para typos estrictos
 /*
 ejecutar para instalar mysqli:
 apt-get update
