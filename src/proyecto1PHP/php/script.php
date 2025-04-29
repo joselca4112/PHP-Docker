@@ -88,6 +88,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //Por ultimo añadimos el nuevo registro a la tabla
     add_personaje($conexion, $personaje);
 
+    //Lo añado tmb a la lista de personajes actuales:
+    $personajesObj[]=$personaje;
+
     //Patron PRG, redireccionamos para no permitir mas inserciones de datos
     header("Location: ".$_SERVER['PHP_SELF']);
     exit();
@@ -96,13 +99,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 Conexion::desconectar($conexion); //Asegurarnos de cerrar la conexion al final del fichero
 
 //Funcion para añadir un nuevo elemento a la tabla
-function add_personaje($conexion, $personaje)
+function add_personaje(PDO $conexion, Personaje $personaje)
 {
     Conexion::insertar($conexion, $personaje);
 }
 
 //Funcion para cargar datos y añadirlos dinamicamente
-function cargar_datos($conexion): array
+function cargar_datos(PDO $conexion): array
 {
     //Lista auxiliar con todos los personajes cargados
     $lista_personajes = [];

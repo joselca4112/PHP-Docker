@@ -11,105 +11,105 @@ class Personaje implements JsonSerializable
     private ?string $descripcion;
     private ?string $img;
 
-    public function getId()
+    public function getId():?int
     {
         return $this->id;
     }
 
-    public function setId($id)
+    public function setId(?int $id)
     {
         $this->id = $id;
     }
 
-    public function getNombre()
+    public function getNombre():?string
     {
         return $this->nombre;
     }
 
-    public function setNombre($nombre)
+    public function setNombre(?string $nombre)
     {
         $this->nombre = $this->recortarString($nombre, 50);
     }
 
-    public function getApodo()
+    public function getApodo():?string
     {
         return $this->apodo;
     }
 
-    public function setApodo($apodo)
+    public function setApodo(?string $apodo)
     {
         $this->apodo = $this->recortarString($apodo, 50);
     }
-    public function getTipoDanio()
+    public function getTipoDanio():?string
     {
         return $this->tipo_danio;
     }
 
-    public function setTipoDanio($tipo_danio)
+    public function setTipoDanio(?string $tipo_danio)
     {
         $this->tipo_danio = $tipo_danio;
     }
 
-    public function getClase()
+    public function getClase(): ?string
     {
         return $this->clase;
     }
 
-    public function setClase($clase)
+    public function setClase(?string $clase)
     {
         $this->clase = $clase;
     }
 
-    public function getDescripcion()
+    public function getDescripcion():?string
     {
         return $this->descripcion;
     }
 
-    public function setDescripcion($descripcion)
+    public function setDescripcion(?string $descripcion)
     {
         $this->descripcion = $this->recortarString($descripcion, 200);
     }
 
-    public function getCasado()
+    public function getCasado():?int
     {
         return $this->casado;
     }
 
-    public function setCasado($casado)
+    public function setCasado(?int $casado)
     {
         $this->casado = $casado;
     }
 
-    public function getEnEquipo()
+    public function getEnEquipo():?int
     {
         return $this->en_equipo;
     }
 
-    public function setEnEquipo($en_equipo)
+    public function setEnEquipo(?int $en_equipo)
     {
         $this->en_equipo = $en_equipo;
     }
-    public function getImg()
+    public function getImg():?string
     {
         return $this->img;
     }
 
-    public function setImg($img)
+    public function setImg(?string $img)
     {
         $this->img = $this->recortarString($img, 255);
     }
 
     // Constructor
     public function __construct(
-        $id=null,
-        $nombre = null,
-        $apodo = null,
-        $tipo_danio = null,
-        $casado = null,
-        $en_equipo = null,
-        $clase = null,
-        $descripcion = null,
-        $img = null
+        ?int $id=null,
+        ?string $nombre = null,
+        ?string $apodo = null,
+        ?string $tipo_danio = null,
+        ?int $casado = null,
+        ?int $en_equipo = null,
+        ?string $clase = null,
+        ?string $descripcion = null,
+        ?string $img = null
     ) {
         $this->id = $id;
         $this->nombre = $nombre;

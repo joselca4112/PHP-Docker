@@ -1,10 +1,10 @@
 <? class Conexion
 {
-    private $host = "db"; //host, en este caso el del docker
-    private $dbname = "mydb";  //bbdd
-    private $username = "root";  // usaurio
-    private $password = "contraseña";  // contraseña
-    private static $conn;
+    private string $host = "db"; //host, en este caso el del docker
+    private string $dbname = "mydb";  //bbdd
+    private string $username = "root";  // usaurio
+    private string $password = "contraseña";  // contraseña
+    private static PDO $conn;
 
     /*
     Para instalar pdo_misql:
@@ -34,10 +34,10 @@
         }
     }
 
-    public static function get_conection()
+    public static function get_conection(): PDO
     {
         // Si la conexión ya existe, la devuelve
-        if (self::$conn) {
+        if (isset(self::$conn)) {
             return self::$conn;
         }
 
@@ -48,13 +48,13 @@
     }
 
     //Method to disconect
-    public static function desconectar($conn)
+    public static function desconectar(PDO $conn)
     {
         $conn = null;
     }
 
     //Crear la tabla en la bbdd
-    public static function crear_tabla($conn)
+    public static function crear_tabla(PDO $conn)
     {
         $query = "
         CREATE TABLE IF NOT EXISTS personajes (
@@ -81,7 +81,7 @@
     }
 
     // Insertar un personaje en la base de datos (Recibe un objeto de tipo Personaje)
-    public static function insertar($conn, $personaje)
+    public static function insertar(PDO $conn, Personaje $personaje)
     {
         // Obtener los valores antes de pasarlos a bindParam()
         $nombre = $personaje->getNombre();
@@ -119,8 +119,42 @@
         }
     }
 
+    //Metodo para actualizar un personaje ya presente en la bbdd:
+    public static function update(PDO $conn,Personaje $personaje):bool{
+        
+        $id=$personaje->getId();
+        $nombre=$personaje->getNombre();
+        $apodo=$personaje->getApodo()();
+        $casado=$personaje->getCasado();
+        $en_equipo=$personaje->getEnEquipo();
+        $descripcion=$personaje->getDescripcion();
+
+        $query = "UPDATE TABLE mydb set nombre= :nombre, apodo= :apodo, casado= :casado,en_equipo= :en_equipo, descripcion= :descripcion
+                    where id= :id";
+        $stmt = $conn->prepare($query);
+
+         // Asignar las variables a los parámetros
+         $stmt->bindParam(':id', $id);
+         $stmt->bindParam(':nombre', $nombre);
+         $stmt->bindParam(':apodo', $apodo);
+         $stmt->bindParam(':casado', $casado);
+         $stmt->bindParam(':en_equipo', $en_equipo);
+         $stmt->bindParam(':descripcion', $descripcion);
+
+         try {
+            // Ejecutar la consulta
+            $stmt->execute();
+        } catch (Exception $e) {
+            error_log("Error al ejecutar la actualizacion de datos: " . $e->getMessage());
+        }finally{
+            
+            // Retornar true si se eliminó el registro, false en caso contrario
+            return $stmt->rowCount() > 0;  // Si rowCount() > 0, se eliminó al menos una fila
+        }
+    }
+
     // Obtener todos los personajes
-    public static function cargar_datos($conn)
+    public static function cargar_datos(PDO $conn)
     {
         $query = "SELECT * FROM personajes";
         $stmt = $conn->prepare($query);
@@ -129,7 +163,7 @@
     }
 
     // Obtener un personaje por su id
-    public static function cargar_por_id($conn, $id): array
+    public static function cargar_por_id(PDO $conn,int $id): array
     {
         $query = "SELECT * FROM personajes WHERE id = :id";
         $stmt = $conn->prepare($query);
@@ -139,7 +173,7 @@
     }
 
     // Eliminar un personaje por su id
-    public static function eliminar_por_id($conn, $id): bool
+    public static function eliminar_por_id(PDO $conn,int $id): bool
     {
         // Consulta SQL para eliminar el personaje con el id proporcionado
         $query = "DELETE FROM personajes WHERE id = :id";

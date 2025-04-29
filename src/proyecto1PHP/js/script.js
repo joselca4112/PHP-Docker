@@ -38,6 +38,21 @@ class Personaje {
     this.descripcion = descripcion;
     this.img = img;
   }
+  // Método para convertir la instancia a un objeto JSON simple
+  toJSON() {
+    return {
+      id: this.id,
+      nombre: this.nombre,
+      apodo: this.apodo,
+      tipo_danio: this.tipo_danio,
+      casado: this.casado,
+      en_equipo: this.en_equipo,
+      clase: this.clase,
+      descripcion: this.descripcion,
+      img: this.img
+    };
+
+  }
 }
 
 //funcion que envie los datos del formulario a la lista al pulsar el boton
@@ -77,8 +92,8 @@ function add_to_list() {
 
     // Crear una instancia del personaje con los datos del formulario
     let personaje = new Personaje(
-      Math.max(...lista_personajes.map(personaje => personaje.id))+1,       
-                    //En cuanto al id, lo asigna el autoincrement en la bbdd pero podemos predecirlo:
+      Math.max(...lista_personajes.map(personaje => personaje.id)) + 1,
+      //En cuanto al id, lo asigna el autoincrement en la bbdd pero podemos predecirlo:
       nombre,       //Los datos de mi lista_personajes tienen id cargado de la bbdd, id del nuevo personaje sera
       apodo,        //el maximo de estos id + 1, por lo que buscamos el id maximo
       tipo_danio,
@@ -145,16 +160,27 @@ function anadir_dato_html(personaje) {
 
   // td para el boleano casado
   const casado = document.createElement('td');
-  casado.textContent = personaje.casado? 'Si':'No'   ;
+  casado.textContent = personaje.casado ? 'Si' : 'No';
 
   // td para el boleano en_equipo
   const en_equipo = document.createElement('td');
-  en_equipo.textContent = personaje.en_equipo? 'Si':'No'   ;
+  en_equipo.textContent = personaje.en_equipo ? 'Si' : 'No';
 
   // td para la clase
   const clase = document.createElement('td');
   clase.textContent = personaje.clase;
 
+  //Boton editar:
+  const btn_container = document.createElement('td');
+  const btn_editar = document.createElement('button');
+  btn_editar.textContent = 'Editar';
+  btn_editar.classList.add('btn', 'btn-primary', 'align-middle');
+  btn_editar.setAttribute('data-toggle', 'modal');
+  btn_editar.setAttribute('data-target', '#exampleModalCenter');
+  btn_editar.id = 'btn_editar_registro'
+
+  //Añadir boton al contenedor:
+  btn_container.appendChild(btn_editar)
   //añadir imagen al th
   th_img.appendChild(imagen);
 
@@ -170,7 +196,7 @@ function anadir_dato_html(personaje) {
   tr.appendChild(casado);
   tr.appendChild(en_equipo);
   tr.appendChild(clase);
-
+  tr.appendChild(btn_container);
   // añadir la fila a la tabla (tr al tbody)
   contenedor.appendChild(tr);
 }
@@ -234,7 +260,7 @@ function submitForm(event) {
 }
 //Función para enviar el ID al servidor usando fetch
 function eliminarDeBaseDeDatos(id) {
-  
+
   fetch('proyecto1PHP/php/eliminar.php', {
     method: 'POST',
     headers: {
@@ -242,16 +268,60 @@ function eliminarDeBaseDeDatos(id) {
     },
     body: JSON.stringify({ id: id })
   })
-  .then(response => {
-    if (!response.ok) throw new Error('Error en la solicitud');
-    console.log('Registro eliminado correctamente');
+    .then(response => {
+      if (!response.ok) throw new Error('Error en la solicitud');
+      console.log('Registro eliminado correctamente');
+    })
+    .catch(error => {
+      console.error('Error al eliminar:', error);
+    });
+
+}
+function actualizarDatos(id, nombre, apodo, casado, en_equipo, descripcion) {
+  //Creamos un nuevo personaje y lo mandamos al php con un fetch:
+  let personaje = new Personaje(
+    id = id,
+    nombre = nombre,
+    apodo = apodo,
+    tipo_danio = null,
+    casado = casado,
+    en_equipo = en_equipo,
+    clase = null,
+    descripcion = descripcion,
+  );
+  const personajeJSON = personaje.toJSON();
+
+  fetch('proyecto1PHP/php/update.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache'
+    },
+    body: JSON.stringify({ personaje: personajeJSON })
   })
-  .catch(error => {
-    console.error('Error al eliminar:', error);
-  });
-  
+    .then(response => {
+      if (!response.ok) throw new Error('Error en la solicitud');
+      else{
+        window.location.replace("proyecto1PHP/php/update.php");
+        alert('Registro actualizado correctamente');
+      } 
+
+    })
+    .catch(error => {
+      console.error('Error al actualizar:', error);
+    });
+
+
 }
 
-
+function waitForElement(selector, callback) {
+  const interval = setInterval(() => {
+    const element = document.querySelector(selector);
+    if (element) {
+      clearInterval(interval);
+      callback(element);
+    }
+  }, 100); // Check every 100ms
+}
 
 

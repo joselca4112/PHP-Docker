@@ -11,12 +11,13 @@ $data = json_decode(file_get_contents("php://input"), true);  // Decodificar el 
 
 // Verificamos si el 'id' fue recibido correctamente
 if (isset($data['id'])) {
-    $id = $data['id'];  // Extraemos el ID del personaje
-    eliminar_personaje($conexion,$id);
+  $id = $data['id'];  // Extraemos el ID del personaje
+  eliminar_personaje($conexion, $id);
 };
 
-function eliminar_personaje(PDO $conn, $id){
-    // Llamamos a la función que elimina el personaje de la base de datos
+function eliminar_personaje(PDO $conn, ?int $id)
+{
+  // Llamamos a la función que elimina el personaje de la base de datos
   $resultado = Conexion::eliminar_por_id($conn, $id);
 
   // Verificamos si la eliminación fue exitosa

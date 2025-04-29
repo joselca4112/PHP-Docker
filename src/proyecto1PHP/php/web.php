@@ -232,9 +232,9 @@
               <div class="border my-4 px-3 py-2">
                 <p><strong>Datos adicionales</strong></p>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="casado" name="casado" value="Casado">
+                  <input class="form-check-input" type="checkbox" id="casado" name="casado" value="on">
                   <label class="form-check-label pr-3" for="casado">Esta casad@</label>
-                  <input class="form-check-input" type="checkbox" id="equipo" name="en_equipo" value="equipo">
+                  <input class="form-check-input" type="checkbox" id="equipo" name="en_equipo" value="on">
                   <label class="form-check-label" for="equipo">En el equipo actual</label>
                 </div>
               </div>
@@ -295,6 +295,59 @@
 
   </div>
 
+
+
+  <!-- Modal -->
+  <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Editar datos del personaje: </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <div>
+            <div class="form-row">
+              <!-- Campo de Nombre -->
+              <div class="form-group col-md-6">
+                <label for="name">Nombre completo del personaje</label>
+                <input class="form-control" type="text" id="name-modal" name="name" placeholder="Introduce el nombre completo" required>
+              </div>
+              <!-- Campo de Apodo -->
+              <div class="form-group col-md-6">
+                <label for="apodo">Apodo</label>
+                <input class="form-control" type="text" id="apodo-modal" name="apodo" placeholder="Introduce el apodo del personaje">
+              </div>
+            </div>
+
+            <div class="border my-4 px-3 py-2">
+              <p><strong>Datos adicionales</strong></p>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="casado-modal" name="casado" value="Casado">
+                <label class="form-check-label pr-3" for="casado">Esta casad@</label>
+                <input class="form-check-input" type="checkbox" id="equipo-modal" name="en_equipo" value="equipo">
+                <label class="form-check-label" for="equipo">En el equipo actual</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="descripcion">Descripcion:</label>
+              <textarea class="form-control" id="descripcion-modal" name="descripcion" rows="4" placeholder="Escribe la descripcion del personaje..."></textarea>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir</button>
+          <button type="button" class="btn btn-primary"  data-dismiss="modal" id="btn_guardar_cambios">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- lick a JS -->
   <script src="proyecto1PHP/js/script.js"></script>
 
@@ -303,6 +356,7 @@
     <? //Para obtener la lista de personajes cargados desde script.php:
     $personajes_cargados = isset($_SESSION['list_personajes']) ? $_SESSION['list_personajes'] : [];
     ?>
+
     // los transformamos a una variable de js
     const personajesjson = <?php echo json_encode($personajes_cargados); ?>;
 
@@ -318,7 +372,7 @@
       data.descripcion,
       data.img
     ));
-    
+
     // funcion para cargar los datos guardados en la bbdd
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -328,54 +382,108 @@
       });
     });
 
-    //Añadir eventos para manejar la eliminacion por selección
+    //Añadir eventos a los botones y demas
     document.addEventListener('DOMContentLoaded', () => {
-      const selectAll = document.getElementById('select-all');
-      const deleteBtn = document.getElementById('delete-selected');
-      const tableBody = document.querySelector('tbody'); // Suponiendo que las filas están dentro de tbody
+        const selectAll = document.getElementById('select-all'); //Checkbox para seleccionar todos
+        const deleteBtn = document.getElementById('delete-selected'); //checkbox por elemento
+        const tableBody = document.querySelector('tbody'); //Para añadir efecto de seleccion
+        const botones_editar = tableBody.querySelectorAll('#btn_editar_registro'); //botones para abrir modal
+        const btn_guardar_cambios = document.getElementById('btn_guardar_cambios') //Btn para lanzar el update a la bbdd
 
-      // Verificación de que los elementos existen
-      if (!selectAll || !deleteBtn || !tableBody) {
-        console.error('No se encontraron los elementos necesarios en el DOM');
-        return;
-      }
-
-      // Delegación de eventos para los checkboxes
-      tableBody.addEventListener('change', (e) => {
-        if (e.target.classList.contains('select-row')) {
-          // Cambiar el estilo de la fila según el estado del checkbox
-          e.target.closest('tr').classList.toggle('fila_seleccionada', e.target.checked);
+        // Verificación de que los elementos existen
+        if (!selectAll || !deleteBtn || !tableBody || !botones_editar) {
+          console.error('No se encontraron los elementos necesarios en el DOM');
+          return;
         }
-      });
 
-      // Seleccionar/deseleccionar todos
-      selectAll.addEventListener('change', () => {
-        const checkboxes = tableBody.querySelectorAll('.select-row');
-        checkboxes.forEach(cb => {
-          cb.checked = selectAll.checked;
-          cb.closest('tr').classList.toggle('fila_seleccionada', cb.checked);
-        });
-      });
-
-      // Acción al hacer clic en el botón "Eliminar"
-      deleteBtn.addEventListener('click', () => {
-
-        const checkboxes = tableBody.querySelectorAll('.select-row');
-
-        checkboxes.forEach((cb, index) => { // Corregimos la sintaxis de forEach
-          if (cb.checked) {
-            cb.closest('tr').remove(); // Borra la fila completa
-
-            // Obtenemos el id del personaje usando el índice de la fila
-            //Ya que los elementos se añaden desde personajesObj la posicion dentro de esta lista es la misma que en la tabla.
-            const id = personajesObj[index].id;
-
-            // Conectar con PHP para eliminar el registro
-            eliminarDeBaseDeDatos(id); // Esto debe ser la función que conecta con PHP
+        // Delegación de eventos para los checkboxes
+        tableBody.addEventListener('change', (e) => {
+          if (e.target.classList.contains('select-row')) {
+            // Cambiar el estilo de la fila según el estado del checkbox
+            e.target.closest('tr').classList.toggle('fila_seleccionada', e.target.checked);
           }
         });
-      });
-    });
+
+        // Seleccionar/deseleccionar todos
+        selectAll.addEventListener('change', () => {
+          const checkboxes = tableBody.querySelectorAll('.select-row');
+          checkboxes.forEach(cb => {
+            cb.checked = selectAll.checked;
+            cb.closest('tr').classList.toggle('fila_seleccionada', cb.checked);
+          });
+        });
+
+        // Acción al hacer clic en el botón "Eliminar"
+        deleteBtn.addEventListener('click', () => {
+
+          const checkboxes = tableBody.querySelectorAll('.select-row');
+
+          checkboxes.forEach((cb, index) => {
+            if (cb.checked) {
+              cb.closest('tr').remove(); // Borra la fila completa
+
+              // Obtenemos el id del personaje usando el índice de la fila
+              //Ya que los elementos se añaden desde personajesObj la posicion dentro de esta lista es la misma que en la tabla.
+              const id = personajesObj[index].id;
+
+              // Conectar con PHP para eliminar el registro
+              eliminarDeBaseDeDatos(id); // Esto debe ser la función que conecta con PHP
+            }
+          });
+        });
+
+        //Cargar datos del personaje al dialog modal
+        let act_id; //Variable para guardar el id del elemento siendo editado
+        botones_editar.forEach((btn, index) => {
+
+          btn.addEventListener('click', () => {
+
+            //Obtenemos los elementos del popup
+            const in_nombre_popup = document.getElementById('name-modal');
+            const in_apodo_popup = document.getElementById('apodo-modal');
+            const in_casado_popup = document.getElementById('casado-modal');
+            const in_en_equipo_popup = document.getElementById('equipo-modal');
+            const in_descripcion_popup = document.getElementById('descripcion-modal');
+
+            //Obtenemos el ersonaje asociado al registro:
+            let personaje = personajesObj[index];
+            act_id=personaje.id;
+
+            //añadimos los datos correspondientes una vez cargue el modal:
+            waitForElement('.modal > *', () => {
+              in_nombre_popup.value = personaje.nombre;
+              in_apodo_popup.value = personaje.apodo;
+              in_descripcion_popup.value = personaje.descripcion;
+
+              in_casado_popup.checked = personaje.casado == 1;
+              in_en_equipo_popup.checked = personaje.en_equipo == 1;
+            });
+
+          })
+        });
+
+        //Event listener para el boton que lanze el update:
+        btn_guardar_cambios.addEventListener('click', ()=>{
+
+          //Recuperar los datos del formulario para editar y mandarlos con el metodo actualizarDatos:
+            const nombre_popup = document.getElementById('name-modal').value;
+            const apodo_popup = document.getElementById('apodo-modal').value;
+            const casado_popup = document.getElementById('casado-modal').checked? 1:0;
+            const en_equipo_popup = document.getElementById('equipo-modal').checked? 1:0;
+            const descripcion_popup = document.getElementById('descripcion-modal').value;
+
+            //Enviamos los datos + el indice almacenado al pulsar el boton editar
+            actualizarDatos(act_id, nombre_popup, apodo_popup, casado_popup, en_equipo_popup, descripcion_popup);
+            //Una vez actualizado liberamos el valor del indice actual
+            act_id=null;
+
+        });
+
+        
+      }
+
+
+    );
   </script>
 
   <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
