@@ -1,7 +1,6 @@
 <?php
-//Ficheros de clase
-include_once("model/Conexion.php");
-include_once("model/Personaje.php");
+include_once __DIR__ . '/../model/Conexion.php';
+include_once __DIR__ . '/../model/Conexion.php';
 
 //Crear conexion
 $conexion = Conexion::get_conection();

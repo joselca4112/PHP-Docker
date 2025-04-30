@@ -7,7 +7,12 @@
   border-color: #ced4da !important;
   /* Establece el borde por defecto de Bootstrap */
 }
-
+#no-underline{
+    text-decoration: none;
+}
+#no-underline:hover {
+  text-decoration: none;
+}
 
 body {
 
@@ -63,5 +68,4 @@ body {
   .fila_seleccionada {
     background-color: #e8f0fe; /* azul clarito */
   }
-
 }

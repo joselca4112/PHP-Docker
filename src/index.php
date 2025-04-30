@@ -6,8 +6,14 @@
 
 //Ficheros que uso en el proyecto 1
 include('proyecto1PHP/php/script.php');//Primero cargo el par añadir datos
-include('proyecto1PHP/php/eliminar.php'); //Luego el script para eliminar
+include('proyecto1PHP/php/functions/eliminar.php'); //Luego el script para eliminar
 include('proyecto1PHP/php/web.php'); //Despues la web html
+
+//Ficheros de clase
+include_once('proyecto1PHP/php/model/Conexion.php');
+include_once('proyecto1PHP/php/model/Personaje.php');
+
+
 
 
 ?>

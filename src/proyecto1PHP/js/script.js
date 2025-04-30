@@ -1,5 +1,4 @@
 
-
 //Lista de elementos personaje
 let lista_personajes = new Array();
 let img_default = "proyecto1PHP/imagenes/userimg.jpg";
@@ -116,78 +115,53 @@ function add_to_list() {
 
 //Funcion para añadir los datos al html
 function anadir_dato_html(personaje) {
+  // Si estaba visible el mensaje de "sin datos", lo ocultamos
+  let txt_aux = document.getElementById('txt-no-data');
+  txt_aux.classList.remove('d-block');
+  txt_aux.classList.add('d-none');
 
-  // contenedor tbody
+  // Contenedor tbody
   const contenedor = document.getElementById("contenedor");
 
-  // tr dentro del contenedor
+  // Creamos la fila (tr) para la tabla
   const tr = document.createElement("tr");
   tr.classList.add('my-3');
 
-  //crear campo para el chexkbox de eliminar:
+  // Crear celdas con los datos del personaje
   const cb_container = document.createElement("th");
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.classList.add('select-row');
+  cb_container.appendChild(checkbox);
 
-  // Crear un elemento <th> para la imagen
+  // Imagen
   const th_img = document.createElement('td');
-  th_img.setAttribute('scope', 'row');// Establecer el atributo 'scope' en el elemento <th>
-
-  // imagen para añadir al th
   const imagen = document.createElement('img');
+  imagen.src = personaje.img || img_default;
+  imagen.alt = personaje.nombre;
+  imagen.classList.add('img-thumbnail');
+  th_img.appendChild(imagen);
 
-  if (!personaje.img) {
-    imagen.src = img_default; // Use default image
-    imagen.alt = personaje.nombre; // Use the title as alt text
-  } else {
-    imagen.src = personaje.img; // Use the image URL
-    imagen.alt = "No image"
-  }
-  imagen.classList.add('img-thumbnail'); //img con bordes
-
-  // td para el nombre
+  // Otros datos
   const nombre = document.createElement('td');
   nombre.textContent = personaje.nombre;
 
-  // td para el apodo
   const apodo = document.createElement('td');
   apodo.textContent = personaje.apodo;
 
-  // td para el tipo_daño
   const tipo_danio = document.createElement('td');
   tipo_danio.textContent = personaje.tipo_danio;
 
-  // td para el boleano casado
   const casado = document.createElement('td');
-  casado.textContent = personaje.casado ? 'Si' : 'No';
+  casado.textContent = personaje.casado ? 'Sí' : 'No';
 
-  // td para el boleano en_equipo
   const en_equipo = document.createElement('td');
-  en_equipo.textContent = personaje.en_equipo ? 'Si' : 'No';
+  en_equipo.textContent = personaje.en_equipo ? 'Sí' : 'No';
 
-  // td para la clase
   const clase = document.createElement('td');
   clase.textContent = personaje.clase;
 
-  //Boton editar:
-  const btn_container = document.createElement('td');
-  const btn_editar = document.createElement('button');
-  btn_editar.textContent = 'Editar';
-  btn_editar.classList.add('btn', 'btn-primary', 'align-middle');
-  btn_editar.setAttribute('data-toggle', 'modal');
-  btn_editar.setAttribute('data-target', '#exampleModalCenter');
-  btn_editar.id = 'btn_editar_registro'
-
-  //Añadir boton al contenedor:
-  btn_container.appendChild(btn_editar)
-  //añadir imagen al th
-  th_img.appendChild(imagen);
-
-  //Añadir checkbox a su contenedor:
-  cb_container.appendChild(checkbox);
-
-  // añadir lo td
+  // Añadir celdas a la fila
   tr.appendChild(cb_container);
   tr.appendChild(th_img);
   tr.appendChild(nombre);
@@ -196,10 +170,16 @@ function anadir_dato_html(personaje) {
   tr.appendChild(casado);
   tr.appendChild(en_equipo);
   tr.appendChild(clase);
-  tr.appendChild(btn_container);
-  // añadir la fila a la tabla (tr al tbody)
+
+  // Añadir la fila al tbody
   contenedor.appendChild(tr);
+
+  // Si la tabla está inicializada, actualizamos la tabla sin reiniciarla
+  if (tablaPersonajes) {
+    tablaPersonajes.row.add($(tr)).draw(false);
+  }
 }
+
 
 function dinamic_file_chooser() {
   document.getElementById('customFile').addEventListener('change', function () {
@@ -225,14 +205,12 @@ function limpiar_formulario() {
   // Restablecer los valores predeterminados del formulario
   formulario.reset();
 
-  // Si hay un archivo seleccionado limpiar el campo de archivo
+  // Limpiar manualmente el campo de archivo
   var fileInput = document.getElementById('customFile');
   var fileLabel = document.querySelector('.custom-file-label');
   fileInput.value = "";
   fileLabel.classList.remove('selected');
   fileLabel.innerText = 'Elige una imagen';
-
-
 }
 
 function submitForm(event) {
@@ -261,7 +239,9 @@ function submitForm(event) {
 //Función para enviar el ID al servidor usando fetch
 function eliminarDeBaseDeDatos(id) {
 
-  fetch('proyecto1PHP/php/eliminar.php', {
+  console.log("Enviando solicitud para eliminar ID:", id);
+
+  fetch('proyecto1PHP/php/functions/eliminar.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -269,12 +249,18 @@ function eliminarDeBaseDeDatos(id) {
     body: JSON.stringify({ id: id })
   })
     .then(response => {
+      console.log("Respuesta recibida:", response);
       if (!response.ok) throw new Error('Error en la solicitud');
+      return response.text(); // o .json() si tu PHP devuelve JSON
+    })
+    .then(data => {
+      console.log('Respuesta del servidor:', data);
       console.log('Registro eliminado correctamente');
     })
     .catch(error => {
       console.error('Error al eliminar:', error);
     });
+
 
 }
 function actualizarDatos(id, nombre, apodo, casado, en_equipo, descripcion) {
@@ -291,20 +277,28 @@ function actualizarDatos(id, nombre, apodo, casado, en_equipo, descripcion) {
   );
   const personajeJSON = personaje.toJSON();
 
-  fetch('proyecto1PHP/php/update.php', {
+  fetch('proyecto1PHP/php/functions/update.php', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({ personaje: personajeJSON })
   })
     .then(response => {
       if (!response.ok) throw new Error('Error en la solicitud');
-      else{
-        window.location.replace("proyecto1PHP/php/update.php");
-        alert('Registro actualizado correctamente');
-      } 
+      else {
+        Swal.fire({
+          title: '¡Actualizado!',
+          text: 'El personaje se modificó correctamente.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            location.reload(); // Recarga la página cuando el usuario pulsa OK
+          }
+        });
+        
+      }
 
     })
     .catch(error => {
@@ -312,6 +306,7 @@ function actualizarDatos(id, nombre, apodo, casado, en_equipo, descripcion) {
     });
 
 
+    
 }
 
 function waitForElement(selector, callback) {
@@ -323,5 +318,54 @@ function waitForElement(selector, callback) {
     }
   }, 100); // Check every 100ms
 }
+// Mostrar el modal con datos del personaje
+function mostrarDetallePersonaje(personaje) {
+  // Llenar los campos
+  document.getElementById('name-modal').value = personaje.nombre;
+  document.getElementById('apodo-modal').value = personaje.apodo;
+  document.getElementById('casado-modal').checked = personaje.casado;
+  document.getElementById('equipo-modal').checked = personaje.en_equipo;
+  document.getElementById('descripcion-modal').value = personaje.descripcion;
+  let act_id=personaje.id; //guardamos la id para actualizar en la bbdd
+
+  // Desactivar los campos
+  toggleCamposModal(true);
+
+  // Botones iniciales
+  document.getElementById('btn_modificar').classList.remove('d-none');
+  document.getElementById('btn_cancelar').classList.add('d-none');
+  btn_guardar=document.getElementById('btn_guardar')
+  btn_guardar.classList.add('d-none');
+
+  //Event listener para el boton que lanze el update:
+  btn_guardar.addEventListener('click', () => {
+
+    //Recuperar los datos del formulario para editar y mandarlos con el metodo actualizarDatos:
+    const nombre_popup = document.getElementById('name-modal').value;
+    const apodo_popup = document.getElementById('apodo-modal').value;
+    const casado_popup = document.getElementById('casado-modal').checked ? 1 : 0;
+    const en_equipo_popup = document.getElementById('equipo-modal').checked ? 1 : 0;
+    const descripcion_popup = document.getElementById('descripcion-modal').value;
+
+    //Enviamos los datos + el indice almacenado al pulsar el boton editar
+    actualizarDatos(act_id, nombre_popup, apodo_popup, casado_popup, en_equipo_popup, descripcion_popup);
+    //Una vez actualizado liberamos el valor del indice actual
+    act_id = null;
+
+  });
+
+  // Mostrar modal
+  $('#exampleModalCenter').modal('show');
+}
+
+// Habilita o deshabilita todos los campos del modal
+function toggleCamposModal(disabled) {
+  document.getElementById('name-modal').disabled = disabled;
+  document.getElementById('apodo-modal').disabled = disabled;
+  document.getElementById('casado-modal').disabled = disabled;
+  document.getElementById('equipo-modal').disabled = disabled;
+  document.getElementById('descripcion-modal').disabled = disabled;
+}
+
 
 

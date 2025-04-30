@@ -5,6 +5,7 @@
     private string $username = "root";  // usaurio
     private string $password = "contraseña";  // contraseña
     private static PDO $conn;
+    private static $tabla_personajes="personajes";
 
     /*
     Para instalar pdo_misql:
@@ -124,12 +125,12 @@
         
         $id=$personaje->getId();
         $nombre=$personaje->getNombre();
-        $apodo=$personaje->getApodo()();
+        $apodo=$personaje->getApodo();
         $casado=$personaje->getCasado();
         $en_equipo=$personaje->getEnEquipo();
         $descripcion=$personaje->getDescripcion();
 
-        $query = "UPDATE TABLE mydb set nombre= :nombre, apodo= :apodo, casado= :casado,en_equipo= :en_equipo, descripcion= :descripcion
+        $query = "UPDATE personajes set nombre= :nombre, apodo= :apodo, casado= :casado,en_equipo= :en_equipo, descripcion= :descripcion
                     where id= :id";
         $stmt = $conn->prepare($query);
 
@@ -141,15 +142,14 @@
          $stmt->bindParam(':en_equipo', $en_equipo);
          $stmt->bindParam(':descripcion', $descripcion);
 
-         try {
+        try {
             // Ejecutar la consulta
             $stmt->execute();
+            return $stmt->rowCount() > 0;// Retornar true si se actualizo el registro, 
+                                        // Si rowCount() > 0, se modificó al menos una fila
         } catch (Exception $e) {
-            error_log("Error al ejecutar la actualizacion de datos: " . $e->getMessage());
-        }finally{
-            
-            // Retornar true si se eliminó el registro, false en caso contrario
-            return $stmt->rowCount() > 0;  // Si rowCount() > 0, se eliminó al menos una fila
+            error_log("Error al ejecutar la actualización de datos: " . $e->getMessage());
+            return false;   
         }
     }
 

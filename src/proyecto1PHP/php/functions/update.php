@@ -1,23 +1,28 @@
 <?php
-//Ficheros de clase
-include_once("model/Conexion.php");
-include_once("model/Personaje.php");
-
+include_once __DIR__ . '/../model/Conexion.php';
+include_once __DIR__ . '/../model/Personaje.php';
 
 //Crear conexion
 $conexion = Conexion::get_conection();
 
 //recibir el personaje para actualizarlo en la tabla
-$raw_data = file_get_contents("php://input");
-var_dump($raw_data);  // Esto debería mostrar el JSON recibido
-
-$data = json_decode($raw_data, true);
-var_dump($data);
+$data = json_decode(file_get_contents("php://input"), true);  // Decodificar el JSON recibido
 
 // Verificamos si el personaje fue recibido correctamente
 if (isset($data['personaje'])) {
-    $personaje = $data['personaje'];  // Extraemos el objeto de la respuesta
+    $personajeData  = $data['personaje'];  // Extraemos el objeto de la respuesta
 
+    $personaje = new Personaje(
+        $personajeData['id'],
+        $personajeData['nombre'],
+        $personajeData['apodo'],
+        $personajeData['tipo_danio'] ?? '', // opcional
+        $personajeData['casado'],
+        $personajeData['en_equipo'],
+        $personajeData['clase'] ?? '', // opcional
+        $personajeData['descripcion'],
+        $personajeData['img'] ?? '' // opcional
+    );
     actualizar_personaje($conexion, $personaje);
 };
 
