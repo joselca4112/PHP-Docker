@@ -26,26 +26,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Acción al hacer clic en el botón "Eliminar"
     deleteBtn.addEventListener('click', () => {
-
-        const checkboxes = tableBody.querySelectorAll('.select-row');
-
-        checkboxes.forEach((cb, index) => {
+        const checkboxes = tableBody.querySelectorAll('.select-row');  // Obtener todos los checkboxes
+        checkboxes.forEach((cb) => {
             if (cb.checked) {
-                cb.closest('tr').remove(); // Borra la fila completa
+                // Obtener el id del personaje desde el elemento oculto en la fila
+                const personajeId = cb.closest('tr').querySelector('#personaje-id').textContent;
 
-                // Obtenemos el id del personaje usando el índice de la fila
-                //Ya que los elementos se añaden desde personajesObj la posicion dentro de esta lista es la misma que en la tabla.
-                const id = personajesObj[index].id;
+                // Borra la fila completa
+                cb.closest('tr').remove();
 
-                personajesObj.splice(index, 1);
+                // Borra el personaje de la lista en memoria (si aún lo necesitas)
+                list_personajes = list_personajes.filter(personaje => personaje.id !== personajeId);
 
                 // Conectar con PHP para eliminar el registro
-                eliminarDeBaseDeDatos(id); // Esto debe ser la función que conecta con PHP
+                eliminarDeBaseDeDatos(personajeId); // Esto debe ser la función que conecta con PHP
             }
         });
 
-        if (!personajesObj.length > 0) {
-            //Si nos quedamos sin datos al borrar mostramos el texto de 'sin datos'
+        if (list_personajes.length === 0) {
             let txt_aux = document.getElementById('txt-no-data');
             txt_aux.classList.add('d-block');
             txt_aux.classList.remove('d-none');

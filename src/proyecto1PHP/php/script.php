@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     add_personaje($conexion, $personaje);
 
     //Lo añado tmb a la lista de personajes actuales:
-    $personajesObj[]=$personaje;
+    $list_personajes[]=$personaje;
 
     //Patron PRG, redireccionamos para no permitir mas inserciones de datos
     header("Location: ".$_SERVER['PHP_SELF']);

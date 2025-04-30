@@ -13,10 +13,6 @@
 
   <!-- Datatable CSS -->
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-  <!-- jQuery -->
-  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- DataTables JS -->
-  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 
   <title>Formulario Boostrap+PHP</title>
 </head>
@@ -204,12 +200,12 @@
         </div>
       </div>
 
-      <!-- tab d ela lista de personajes -->
+      <!-- tab de la lista de personajes -->
       <div id="table-tab" class="tab-pane d-block">
         <p>
         <h1>Personajes actuales </h1>
         </p>
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap mb-4">
           <button class="btn btn-primary mt-2" id="delete-selected">Eliminar selección</button>
           <button class="btn btn-outline-secondary" id="downloadBtn">Exportar csv</button>
         </div>
@@ -238,7 +234,6 @@
           <h1 class="lead d-none" id="txt-no-data">No se encontraron datos. Añade un personaje nuevo.</h1>
         </div>
       </div>
-
 
     </main>
 
@@ -339,11 +334,15 @@
 
   <!-- Para alertar mas precisas -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <!-- link a JS script y para boton csv-->
-  <script src="proyecto1PHP/js/script.js"></script>
+  <!-- jQuery -->
+  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- DataTables JS -->
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+  <!-- link a JS para boton csv-->
   <script src="proyecto1PHP/js/downloadbutton.js"></script>
-
+  <!-- js principal con funciones-->
+  <script src="proyecto1PHP/js/script.js"></script>
+  
   <!-- Script con funciones del arbol dom que deben conectar con PHP -->
   <script>
     <? //Para obtener la lista de personajes cargados desde script.php:
@@ -353,25 +352,26 @@
     const personajesjson = <?php echo json_encode($personajes_cargados); ?>;
 
     //Los 'casteamos' a un objeto de la clase Personaje
-    const personajesObj = personajesjson.map(data => new Personaje(
-      data.id,
-      data.nombre,
-      data.apodo,
-      data.tipo_danio,
-      data.casado,
-      data.en_equipo,
-      data.clase,
-      data.descripcion,
-      data.img
-    ));
+    personajesjson.forEach(data => {
+      list_personajes.push(new Personaje(
+        data.id,
+        data.nombre,
+        data.apodo,
+        data.tipo_danio,
+        data.casado,
+        data.en_equipo,
+        data.clase,
+        data.descripcion,
+        data.img
+      ));
+    });
 
     // funcion para cargar los datos guardados en la bbdd
     document.addEventListener('DOMContentLoaded', function() {
-
       //Comprobamos que se hayan recuperado datos
-      if (personajesObj.length > 0) {
+      if (list_personajes.length > 0) {
         // iteramos la lista y vamos añadiendolos 
-        personajesObj.forEach(personaje => {
+        list_personajes.forEach(personaje => {
           anadir_dato_html(personaje);
         });
       } else {
@@ -388,9 +388,6 @@
   </script>
 
   <!-- boostrap-->
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
     crossorigin="anonymous"></script>

@@ -69,3 +69,37 @@ body {
     background-color: #e8f0fe; /* azul clarito */
   }
 }
+
+/*Estilos para la tabla*/
+/* Personaliza los botones de paginación */
+.dataTables_paginate .pagination {
+  margin: 0;
+  padding: 0;
+  justify-content: center; /* Centra los botones */
+}
+
+.dataTables_paginate .pagination .page-item {
+  margin: 0 2px; /* Espaciado entre los botones */
+}
+
+.dataTables_paginate .pagination .page-link {
+  border-radius: 50px; /* Botones redondeados */
+  color: #007bff; /* Color del texto de los botones */
+}
+
+.dataTables_paginate .pagination .page-item.active .page-link {
+  background-color: #007bff; /* Fondo azul para la página activa */
+  border-color: #007bff; /* Borde azul para la página activa */
+  color: white; /* Color blanco para el texto de la página activa */
+}
+
+.dataTables_paginate .pagination .page-item.disabled .page-link {
+  color: #ccc; /* Color gris para los botones deshabilitados */
+  pointer-events: none; /* Desactiva el clic en los botones deshabilitados */
+}
+
+.dataTables_paginate .pagination .page-link:hover {
+  background-color: #0056b3; /* Color de fondo azul oscuro al pasar el ratón */
+  border-color: #0056b3; /* Borde azul oscuro al pasar el ratón */
+  color: white; /* Color blanco para el texto al pasar el ratón */
+}

@@ -1,7 +1,6 @@
-
-//Lista de elementos personaje
-let lista_personajes = new Array();
+let list_personajes = [];
 let img_default = "proyecto1PHP/imagenes/userimg.jpg";
+let tablaPersonajes;
 dinamic_file_chooser();
 
 // Asignar el evento al formulario para que al hacer submit se ejecute la función
@@ -91,9 +90,9 @@ function add_to_list() {
 
     // Crear una instancia del personaje con los datos del formulario
     let personaje = new Personaje(
-      Math.max(...lista_personajes.map(personaje => personaje.id)) + 1,
+      Math.max(...list_personajes.map(personaje => personaje.id)) + 1,
       //En cuanto al id, lo asigna el autoincrement en la bbdd pero podemos predecirlo:
-      nombre,       //Los datos de mi lista_personajes tienen id cargado de la bbdd, id del nuevo personaje sera
+      nombre,       //Los datos de mi list_personajes tienen id cargado de la bbdd, id del nuevo personaje sera
       apodo,        //el maximo de estos id + 1, por lo que buscamos el id maximo
       tipo_danio,
       casado,
@@ -104,7 +103,7 @@ function add_to_list() {
     );
 
     // Agregar el personaje a la lista
-    lista_personajes.push(personaje);
+    list_personajes.push(personaje);
 
     //Añadirlo al html:
     anadir_dato_html(personaje);
@@ -115,53 +114,79 @@ function add_to_list() {
 
 //Funcion para añadir los datos al html
 function anadir_dato_html(personaje) {
-  // Si estaba visible el mensaje de "sin datos", lo ocultamos
+
+  //por si estaba activo el mensaje de sin datos:
   let txt_aux = document.getElementById('txt-no-data');
   txt_aux.classList.remove('d-block');
   txt_aux.classList.add('d-none');
 
-  // Contenedor tbody
+  // contenedor tbody
   const contenedor = document.getElementById("contenedor");
 
-  // Creamos la fila (tr) para la tabla
+  // tr dentro del contenedor
   const tr = document.createElement("tr");
   tr.classList.add('my-3');
 
-  // Crear celdas con los datos del personaje
+  //crear campo para el chexkbox de eliminar:
   const cb_container = document.createElement("th");
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.classList.add('select-row');
-  cb_container.appendChild(checkbox);
 
-  // Imagen
+  //Campo invisible para el id:
+  const id=document.createElement("td")
+  id.textContent =personaje.id
+  id.classList.add("d-none")
+  id.id="personaje-id"
+
+  // Crear un elemento <th> para la imagen
   const th_img = document.createElement('td');
-  const imagen = document.createElement('img');
-  imagen.src = personaje.img || img_default;
-  imagen.alt = personaje.nombre;
-  imagen.classList.add('img-thumbnail');
-  th_img.appendChild(imagen);
+  th_img.setAttribute('scope', 'row');// Establecer el atributo 'scope' en el elemento <th>
 
-  // Otros datos
+  // imagen para añadir al th
+  const imagen = document.createElement('img');
+
+  if (!personaje.img) {
+    imagen.src = img_default; // Use default image  
+    imagen.alt = personaje.nombre; // Use the title as alt text
+  } else {
+    imagen.src = personaje.img; // Use the image URL
+    imagen.alt = "No image"
+  }
+  imagen.classList.add('img-thumbnail'); //img con bordes
+
+  // td para el nombre
   const nombre = document.createElement('td');
   nombre.textContent = personaje.nombre;
+  nombre.id="td-nombre";
 
+  // td para el apodo
   const apodo = document.createElement('td');
   apodo.textContent = personaje.apodo;
 
+  // td para el tipo_daño
   const tipo_danio = document.createElement('td');
   tipo_danio.textContent = personaje.tipo_danio;
 
+  // td para el boleano casado
   const casado = document.createElement('td');
-  casado.textContent = personaje.casado ? 'Sí' : 'No';
+  casado.textContent = personaje.casado ? 'Si' : 'No';
 
+  // td para el boleano en_equipo
   const en_equipo = document.createElement('td');
-  en_equipo.textContent = personaje.en_equipo ? 'Sí' : 'No';
+  en_equipo.textContent = personaje.en_equipo ? 'Si' : 'No';
 
+  // td para la clase
   const clase = document.createElement('td');
   clase.textContent = personaje.clase;
 
-  // Añadir celdas a la fila
+  //añadir imagen al th
+  th_img.appendChild(imagen);
+
+  //Añadir checkbox a su contenedor:
+  cb_container.appendChild(checkbox);
+
+  // añadir lo td
   tr.appendChild(cb_container);
   tr.appendChild(th_img);
   tr.appendChild(nombre);
@@ -170,14 +195,41 @@ function anadir_dato_html(personaje) {
   tr.appendChild(casado);
   tr.appendChild(en_equipo);
   tr.appendChild(clase);
+  tr.appendChild(id)
 
-  // Añadir la fila al tbody
-  contenedor.appendChild(tr);
+  
+  // Si la tabla no está inicializada, la inicializamos y añadimos los datos
+  if (!tablaPersonajes) {
+    tablaPersonajes = $('#analiticaTable').DataTable({
+      pageLength: 10,  // Número de registros por página
+      lengthMenu: [5, 10, 25, 50],  // Opciones de cantidad de registros a mostrar por página
+      searching: false,  // Desactiva el buscador
+      pagingType: 'simple_numbers', // Estilo de paginación: solo números y botones "Anterior" y "Siguiente"
+      language: {
+        infoEmpty: "No hay registros disponibles", // Texto si no hay datos
+        zeroRecords: "No se encontraron registros", // Texto cuando no se encuentran registros
+        paginate: {
+          previous: "Anterior",  
+          next: "Siguiente"
+        },
+        info: "Página _PAGE_ de _PAGES_", // Información de los registros mostrados
+        lengthMenu: "Mostrar _MENU_ registros por página"  // Texto para el menú de cantidad de registros por página
+      },
+      order: [[2, 'asc']], // Orden predeterminado (por ejemplo, por la primera columna ascendente)
+      columnDefs: [{
+        targets: [0, 1],  // Columnas a las que desactivas la búsqueda (puedes ajustarlo según sea necesario)
+        orderable: false  // Desactiva la ordenación en estas columnas
+      }],
+      responsive: true // Hacer la tabla responsive
+    });    
 
-  // Si la tabla está inicializada, actualizamos la tabla sin reiniciarla
-  if (tablaPersonajes) {
-    tablaPersonajes.row.add($(tr)).draw(false);
+    tablaPersonajes.row.add($(tr.outerHTML)).draw(false);
+  } else {
+    // Si la tabla ya está inicializada, simplemente actualizamos los datos sin recargar la tabla
+    tablaPersonajes.row.add($(tr.outerHTML)).draw(false);
   }
+
+  asignarClickAFilas();
 }
 
 
@@ -239,8 +291,6 @@ function submitForm(event) {
 //Función para enviar el ID al servidor usando fetch
 function eliminarDeBaseDeDatos(id) {
 
-  console.log("Enviando solicitud para eliminar ID:", id);
-
   fetch('proyecto1PHP/php/functions/eliminar.php', {
     method: 'POST',
     headers: {
@@ -249,13 +299,8 @@ function eliminarDeBaseDeDatos(id) {
     body: JSON.stringify({ id: id })
   })
     .then(response => {
-      console.log("Respuesta recibida:", response);
       if (!response.ok) throw new Error('Error en la solicitud');
       return response.text(); // o .json() si tu PHP devuelve JSON
-    })
-    .then(data => {
-      console.log('Respuesta del servidor:', data);
-      console.log('Registro eliminado correctamente');
     })
     .catch(error => {
       console.error('Error al eliminar:', error);
@@ -263,6 +308,8 @@ function eliminarDeBaseDeDatos(id) {
 
 
 }
+
+//Actualiza los datos de la bbdd
 function actualizarDatos(id, nombre, apodo, casado, en_equipo, descripcion) {
   //Creamos un nuevo personaje y lo mandamos al php con un fetch:
   let personaje = new Personaje(
@@ -367,5 +414,54 @@ function toggleCamposModal(disabled) {
   document.getElementById('descripcion-modal').disabled = disabled;
 }
 
+function asignarClickAFilas() {
+  const filas = document.querySelectorAll('#analiticaTable tbody tr');
+
+  filas.forEach((tr, index) => {
+    tr.addEventListener('click', () => {
+      index=tr.getElementById('personaje-id').textContent;
+      const personaje = list_personajes[index];
+      mostrarDetallePersonaje(personaje);
+    });
+    // Añadir el evento de clic con stopPropagation para que no se abra la ventana de detalles
+    tr.querySelector("th").onclick = function (event) {
+    event.stopPropagation();
+  };
+  });
+}
+function asignarClickAFilas() {
+  const filas = document.querySelectorAll('#analiticaTable tbody tr');
+
+  filas.forEach((tr, index) => {
+    tr.addEventListener('click', () => {
+      const personajeId = tr.querySelector('#personaje-id').textContent;
+
+      // Realizar una solicitud a PHP para obtener los detalles del personaje
+      fetch('proyecto1PHP/php/functions/idselect.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: personajeId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          mostrarDetallePersonaje(data.personaje);  // Aquí pasas el personaje que obtuviste
+        } else {
+          console.error('Error:', data.message);  // Muestra el error si no se encontró el personaje
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener el personaje:', error);
+      });
+    });
+
+    // Añadir el evento de clic con stopPropagation para que no se abra la ventana de detalles
+    tr.querySelector("th").onclick = function (event) {
+      event.stopPropagation();
+    };
+  });
+}
 
 
