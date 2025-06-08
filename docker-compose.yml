@@ -2,10 +2,12 @@ version: '3.8'
 
 services:
   php:
-    image: php:8.4-apache
+    build:
+      context: .          # Ruta a tu Dockerfile (raíz del proyecto)
+      dockerfile: Dockerfile
     container_name: php_container
     ports:
-      - "8080:80" # Mapea el puerto 8080 de tu máquina al puerto 80 del contenedor
+      - "8080:80"
     environment:
       - MYSQL_HOST=db
       - MYSQL_DATABASE=mydb
